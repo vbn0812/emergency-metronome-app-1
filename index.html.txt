@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>緊急救援與節奏輔助 APP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'app-red': '#FF0000', // 鮮紅色
+                        'app-white': '#FFFFFF', // 純白色背景
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 讓手機 App 畫面置中並限制最大寬度，增強手機視覺效果 */
+        #app {
+            max-width: 420px; /* 模擬手機寬度 */
+            min-height: 100vh;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #f7f7f7; /* 輕微的灰白色背景 */
+        }
+
+        /* 節拍器動畫：簡單的脈衝效果 */
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        .metronome-icon.beating {
+            animation: beat 0.6s infinite alternate; /* 假設節奏是 100 BPM (0.6秒/次) */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div id="app" class="font-sans">
+    
+    <header class="bg-app-red p-4 shadow-lg text-white text-center font-bold text-xl">
+        🚨 緊急救援與節奏輔助
+    </header>
+
+    <main class="p-6 bg-app-white flex flex-col gap-6">
+
+        <section class="bg-gray-50 p-6 rounded-xl shadow-md border-t-4 border-app-red">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">🎵 節拍器</h2>
+            
+            <div class="flex flex-col items-center gap-4">
+                
+                <p class="text-6xl font-extrabold text-app-red transition duration-300">{{ bpm }}</p>
+                <p class="text-sm text-gray-500 mb-4">BPM (每分鐘節拍數)</p>
+
+                <svg @click="toggleMetronome" 
+                     :class="{'beating': isMetronomeRunning, 'cursor-pointer': true, 'transition': true, 'duration-200': true}" 
+                     class="metronome-icon w-24 h-24 text-app-red" 
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+
+                <button @click="toggleMetronome" 
+                        :class="isMetronomeRunning ? 'bg-gray-400' : 'bg-app-red hover:bg-red-700'" 
+                        class="mt-4 w-full py-3 text-lg text-white font-bold rounded-full shadow-lg transition duration-300">
+                    {{ isMetronomeRunning ? '停止節拍器' : '開始節拍器' }}
+                </button>
+                
+                <div class="w-full mt-4">
+                    <label for="bpm-slider" class="block text-sm font-medium text-gray-700 mb-2">調整 BPM: {{ bpm }}</label>
+                    <input type="range" id="bpm-slider" min="60" max="180" step="1" v-model.number="bpm" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg app-red-slider">
+                </div>
+
+            </div>
+        </section>
+
+        <section class="grid grid-cols-2 gap-4">
+            
+            <button @click="callEmergency" 
+                    class="flex flex-col items-center justify-center p-6 bg-app-red text-white rounded-xl shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-[1.02] active:scale-[0.98]">
+                <svg class="w-12 h-12 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22 16.92l-3.3-3.3c-.4-.4-.9-.62-1.42-.62h-1.5c-.32 0-.64.08-.94.24-.3.16-.54.4-.68.68-.14.28-.2.6-.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92zM12 2.09c.32 0 .64.08.94.24.3.16.54.4.68.68.14.28.2.6.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92z"/>
+                    <path d="M17.5 13.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5-2.5-1.12-2.5-2.5 1.12-2.5 2.5-2.5z"/>
+                </svg>
+                <span class="text-xl font-bold">一鍵報案 (119)</span>
+            </button>
+
+            <button @click="showCPRModal = true" 
+                    class="flex flex-col items-center justify-center p-6 bg-app-white text-app-red border-2 border-app-red rounded-xl shadow-md hover:bg-red-50 transition duration-300 transform hover:scale-[1.02] active:scale-[0.98]">
+                <svg class="w-12 h-12 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="text-xl font-bold">CPR 介紹與步驟</span>
+            </button>
+
+        </section>
+
+    </main>
+    
+    <div v-if="showCPRModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-app-white p-6 rounded-2xl shadow-2xl m-4 w-full max-w-md transform transition-all duration-300 ease-out">
+            <h3 class="text-3xl font-bold text-app-red mb-4 border-b-2 border-app-red pb-2">🩺 CPR 步驟流程</h3>
+            
+            <ol class="list-decimal pl-5 space-y-3 text-gray-700 text-lg">
+                <li class="font-semibold">叫 (確認環境與患者意識)</li>
+                <li class="font-semibold">叫 (撥打 119/112 緊急電話求助)</li>
+                <li class="font-semibold">C (胸外按壓): 
+                    <span class="font-normal text-sm block">胸骨下半部，深度至少 5 公分，速率 **100-120 次/分**。</span>
+                </li>
+                <li class="font-semibold">A (打開呼吸道): 
+                    <span class="font-normal text-sm block">壓額提下巴。</span>
+                </li>
+                <li class="font-semibold">B (人工呼吸): 
+                    <span class="font-normal text-sm block">每 30 次按壓後，給予 2 次人工呼吸 (30:2)。</span>
+                </li>
+            </ol>
+
+            <button @click="showCPRModal = false" 
+                    class="mt-6 w-full py-3 bg-app-red text-white font-bold rounded-full hover:bg-red-700 transition duration-300">
+                關閉
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const { createApp, ref, watch, onMounted, onUnmounted } = Vue;
+
+    createApp({
+        setup() {
+            // --- 狀態定義 ---
+            const isMetronomeRunning = ref(false); // 節拍器是否運行中
+            const bpm = ref(120); // 節拍速度 (BPM: Beats Per Minute)
+            const showCPRModal = ref(false); // 控制 CPR 彈出視窗
+            let metronomeInterval = null;
+            let audioContext = null;
+            let oscillator = null;
+
+            // --- 聲音產生器 ---
+            function setupAudio() {
+                if (audioContext === null) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            function playClick() {
+                setupAudio();
+                
+                // 創建一個震盪器
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                // 設定聲音屬性 (短促的滴答聲)
+                oscillator.type = 'square'; // 方波
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // 頻率 440 Hz
+                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+
+                // 設定聲音結束時間 (非常短促)
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.05); // 播放 50 毫秒
+            }
+
+            // --- 節拍器邏輯 ---
+            function startMetronome() {
+                if (metronomeInterval) {
+                    clearInterval(metronomeInterval);
+                }
+                if (bpm.value < 60) bpm.value = 60; // 防止過低
+                if (bpm.value > 180) bpm.value = 180; // 防止過高
+
+                // 計算每個節拍的時間間隔 (毫秒)
+                const intervalTime = (60 / bpm.value) * 1000; 
+
+                metronomeInterval = setInterval(() => {
+                    playClick(); // 播放節奏聲
+                }, intervalTime);
+
+                isMetronomeRunning.value = true;
+            }
+
+            function stopMetronome() {
+                if (metronomeInterval) {
+                    clearInterval(metronomeInterval);
+                    metronomeInterval = null;
+                }
+                isMetronomeRunning.value = false;
+            }
+
+            function toggleMetronome() {
+                if (isMetronomeRunning.value) {
+                    stopMetronome();
+                } else {
+                    startMetronome();
+                }
+            }
+
+            // 監聽 BPM 變化，若節拍器運行中則重新啟動以應用新速度
+            watch(bpm, (newBPM, oldBPM) => {
+                if (isMetronomeRunning.value) {
+                    startMetronome(); 
+                }
+            });
+
+
+            // --- 緊急功能邏輯 ---
+            function callEmergency() {
+                // 這是模擬一鍵報案，實際在手機上會嘗試撥打電話
+                const phoneNumber = '119';
+                if (confirm(`您確定要撥打緊急電話 ${phoneNumber} 嗎？`)) {
+                    // window.location.href = `tel:${phoneNumber}`; // 實際在手機瀏覽器中使用
+                    alert(`正在模擬撥打 ${phoneNumber}...`);
+                }
+            }
+            
+            // --- 生命周期鉤子 (清理工作) ---
+            onUnmounted(() => {
+                stopMetronome();
+                if (audioContext) {
+                    audioContext.close();
+                }
+            });
+
+
+            // --- 返回供模板使用的狀態和方法 ---
+            return {
+                isMetronomeRunning,
+                bpm,
+                showCPRModal,
+                toggleMetronome,
+                callEmergency,
+            };
+        }
+    }).mount('#app');
+</script>
+
+</body>
+</html>
