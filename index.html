@@ -30,14 +30,33 @@
             flex-direction: column;
         }
 
-        /* 心跳動畫 */
-        @keyframes beat {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.15); opacity: 1; }
+        /* --- 新增的 CSS：節拍器擺動動畫 --- */
+        
+        /* 定義擺動的關鍵影格 (從左擺到右) */
+        @keyframes swing {
+            from { transform: rotate(-25deg); }
+            to { transform: rotate(25deg); }
         }
-        .metronome-icon.beating {
-            animation: beat 0.6s infinite alternate;
+
+        /* 節拍器圖標的基本設定 */
+        .metronome-icon {
+            /* 【關鍵設定】將旋轉的軸心設定在圖標的「底部中間」 */
+            /* 這樣它才會像鐘擺一樣左右搖晃，而不是原地打轉 */
+            transform-origin: 50% 90%; 
+            transition: transform 0.3s ease; /* 讓啟動/停止時有平滑過渡 */
         }
+
+        /* 當節拍器啟動時加入的類別 */
+        .metronome-icon.is-swinging {
+            /* 執行 swing 動畫 */
+            /* 0.5s: 完成一次單向擺動的時間 (配合高 BPM 的緊湊感) */
+            /* infinite: 無限循環 */
+            /* alternate: 來回交替播放 (左->右，然後右->左) */
+            /* ease-in-out: 起步和結束時速度較慢，中間較快，模擬真實物理慣性 */
+            animation: swing 0.5s ease-in-out infinite alternate;
+        }
+
+        /* --- CSS 結束 --- */
 
         /* 防止選取文字，讓質感更像 App */
         body {
@@ -67,10 +86,11 @@
                 <p class="text-sm text-gray-400 font-medium mb-4 uppercase tracking-widest">BPM (每分鐘次數)</p>
 
                 <svg @click="toggleMetronome" 
-                     :class="{'beating': isMetronomeRunning}" 
-                     class="w-24 h-24 text-app-red cursor-pointer transition-transform duration-200 active:scale-95" 
+                     :class="{'is-swinging': isMetronomeRunning}" 
+                     class="metronome-icon w-24 h-24 text-app-red cursor-pointer active:scale-95" 
                      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    <path d="M12 2c-.55 0-1 .45-1 1v1H8c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3V3c0-.55-.45-1-1-1zm-1 5h2v1h-2V7zm0 2h2v1h-2V9zm0 2h2v1h-2v-1zm0 2h2v1h-2v-1zm-3.5 4.5L9 14l-1.5-3.5L6 17.5h1.5z"/>
+                    <path d="M12 4L9.5 18h5L12 4z" opacity="0.6"/> 
                 </svg>
 
                 <button @click="toggleMetronome" 
@@ -195,7 +215,6 @@
 
             function playClick() {
                 setupAudio();
-                // 解決瀏覽器阻擋自動播放的問題
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
@@ -206,7 +225,6 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
 
-                // 設定高音頻率，讓節奏更明顯
                 oscillator.type = 'square';
                 oscillator.frequency.setValueAtTime(880, audioContext.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
@@ -218,16 +236,12 @@
 
             function startMetronome() {
                 if (metronomeInterval) clearInterval(metronomeInterval);
-                
-                // 限制 BPM 範圍
                 if (bpm.value < 60) bpm.value = 60;
                 if (bpm.value > 180) bpm.value = 180;
 
                 const intervalTime = (60 / bpm.value) * 1000; 
 
-                // 立即播放第一聲
                 playClick();
-                
                 metronomeInterval = setInterval(() => {
                     playClick();
                 }, intervalTime);
@@ -251,7 +265,6 @@
                 }
             }
 
-            // 即時調整速度
             watch(bpm, () => {
                 if (isMetronomeRunning.value) startMetronome();
             });
