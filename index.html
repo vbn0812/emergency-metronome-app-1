@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Emergency Aid App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'app-red': '#FF0000', 
+                        'app-white': '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mobile-first styling container */
+        #app {
+            max-width: 420px;
+            min-height: 100vh;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Pulse Animation */
+        @keyframes beat {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .metronome-icon.beating {
+            animation: beat 0.6s infinite alternate;
+        }
+
+        /* Prevent text selection for app-like feel */
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-200">
+
+<div id="app" class="font-sans">
+    
+    <header class="bg-app-red p-5 shadow-lg text-white text-center font-bold text-xl sticky top-0 z-10">
+        🚨 Emergency Aid
+    </header>
+
+    <main class="flex-1 p-6 bg-app-white flex flex-col gap-6 overflow-y-auto">
+
+        <section class="bg-gray-50 p-6 rounded-2xl shadow-sm border-t-4 border-app-red">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                🎵 Metronome
+            </h2>
+            
+            <div class="flex flex-col items-center gap-2">
+                
+                <p class="text-7xl font-black text-app-red tracking-tight">{{ bpm }}</p>
+                <p class="text-sm text-gray-400 font-medium mb-4 uppercase tracking-widest">BPM (Beats Per Minute)</p>
+
+                <svg @click="toggleMetronome" 
+                     :class="{'beating': isMetronomeRunning}" 
+                     class="w-24 h-24 text-app-red cursor-pointer transition-transform duration-200 active:scale-95" 
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+
+                <button @click="toggleMetronome" 
+                        :class="isMetronomeRunning ? 'bg-gray-500' : 'bg-app-red shadow-app-red/50'" 
+                        class="mt-6 w-full py-4 text-lg text-white font-bold rounded-full shadow-lg transition-all duration-300 active:scale-95">
+                    {{ isMetronomeRunning ? 'STOP' : 'START' }}
+                </button>
+                
+                <div class="w-full mt-6 px-2">
+                    <div class="flex justify-between text-xs text-gray-400 font-bold mb-2">
+                        <span>60</span>
+                        <span>180</span>
+                    </div>
+                    <input type="range" min="60" max="180" step="1" v-model.number="bpm" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600">
+                </div>
+
+            </div>
+        </section>
+
+        <section class="grid grid-cols-2 gap-4 mt-auto">
+            
+            <button @click="callEmergency" 
+                    class="flex flex-col items-center justify-center p-5 bg-app-red text-white rounded-2xl shadow-lg hover:bg-red-700 active:bg-red-800 transition transform active:scale-95">
+                <svg class="w-10 h-10 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22 16.92l-3.3-3.3c-.4-.4-.9-.62-1.42-.62h-1.5c-.32 0-.64.08-.94.24-.3.16-.54.4-.68.68-.14.28-.2.6-.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92zM12 2.09c.32 0 .64.08.94.24.3.16.54.4.68.68.14.28.2.6.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92z"/>
+                </svg>
+                <span class="text-lg font-bold leading-tight">Call 119</span>
+            </button>
+
+            <button @click="showCPRModal = true" 
+                    class="flex flex-col items-center justify-center p-5 bg-white text-app-red border-2 border-app-red rounded-2xl shadow-sm hover:bg-red-50 active:bg-red-100 transition transform active:scale-95">
+                <svg class="w-10 h-10 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="text-lg font-bold leading-tight">CPR Steps</span>
+            </button>
+
+        </section>
+
+    </main>
+    
+    <div v-if="showCPRModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <div class="bg-app-red p-4 text-white">
+                <h3 class="text-2xl font-bold text-center">CPR Guide</h3>
+            </div>
+            
+            <div class="p-6 overflow-y-auto text-gray-800">
+                <ul class="space-y-4">
+                    <li class="flex gap-3">
+                        <span class="font-black text-app-red text-xl">1.</span>
+                        <div>
+                            <strong class="text-lg block">Check Response</strong>
+                            <span class="text-sm text-gray-500">Tap shoulders & shout. Check for breathing.</span>
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-black text-app-red text-xl">2.</span>
+                        <div>
+                            <strong class="text-lg block">Call for Help</strong>
+                            <span class="text-sm text-gray-500">Call 119 immediately. Get AED if available.</span>
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-black text-app-red text-xl">3.</span>
+                        <div>
+                            <strong class="text-lg block">Compressions (C)</strong>
+                            <span class="text-sm text-gray-500">
+                                Center of chest.<br>
+                                Depth: at least 5cm.<br>
+                                Rate: <strong>100-120 bpm</strong>.
+                            </span>
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-black text-app-red text-xl">4.</span>
+                        <div>
+                            <strong class="text-lg block">Airway (A)</strong>
+                            <span class="text-sm text-gray-500">Head tilt, chin lift.</span>
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="font-black text-app-red text-xl">5.</span>
+                        <div>
+                            <strong class="text-lg block">Breathing (B)</strong>
+                            <span class="text-sm text-gray-500">2 breaths after 30 compressions (30:2).</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="p-4 border-t border-gray-100">
+                <button @click="showCPRModal = false" 
+                        class="w-full py-3 bg-gray-200 text-gray-800 font-bold rounded-xl hover:bg-gray-300 active:bg-gray-400 transition">
+                    Close Guide
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const { createApp, ref, watch, onUnmounted } = Vue;
+
+    createApp({
+        setup() {
+            const isMetronomeRunning = ref(false);
+            const bpm = ref(120);
+            const showCPRModal = ref(false);
+            let metronomeInterval = null;
+            let audioContext = null;
+
+            // Audio Logic
+            function setupAudio() {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            function playClick() {
+                setupAudio();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // Higher pitch for clarity
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            }
+
+            function startMetronome() {
+                if (metronomeInterval) clearInterval(metronomeInterval);
+                
+                // Clamp BPM
+                if (bpm.value < 60) bpm.value = 60;
+                if (bpm.value > 180) bpm.value = 180;
+
+                const intervalTime = (60 / bpm.value) * 1000; 
+
+                // Play first beat immediately
+                playClick();
+                
+                metronomeInterval = setInterval(() => {
+                    playClick();
+                }, intervalTime);
+
+                isMetronomeRunning.value = true;
+            }
+
+            function stopMetronome() {
+                if (metronomeInterval) {
+                    clearInterval(metronomeInterval);
+                    metronomeInterval = null;
+                }
+                isMetronomeRunning.value = false;
+            }
+
+            function toggleMetronome() {
+                if (isMetronomeRunning.value) {
+                    stopMetronome();
+                } else {
+                    startMetronome();
+                }
+            }
+
+            // Adjust speed in real-time
+            watch(bpm, () => {
+                if (isMetronomeRunning.value) startMetronome();
+            });
+
+            function callEmergency() {
+                if (confirm("Call Emergency Services (119)?")) {
+                    window.location.href = "tel:119"; 
+                }
+            }
+            
+            onUnmounted(() => {
+                stopMetronome();
+                if (audioContext) audioContext.close();
+            });
+
+            return {
+                isMetronomeRunning,
+                bpm,
+                showCPRModal,
+                toggleMetronome,
+                callEmergency,
+            };
+        }
+    }).mount('#app');
+</script>
+
+</body>
+</html>
