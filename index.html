@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Emergency Aid App</title>
+    <title>急救節拍器 APP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -19,7 +19,7 @@
         }
     </script>
     <style>
-        /* Mobile-first styling container */
+        /* 手機版型容器設定 */
         #app {
             max-width: 420px;
             min-height: 100vh;
@@ -30,7 +30,7 @@
             flex-direction: column;
         }
 
-        /* Pulse Animation */
+        /* 心跳動畫 */
         @keyframes beat {
             0%, 100% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.15); opacity: 1; }
@@ -39,7 +39,7 @@
             animation: beat 0.6s infinite alternate;
         }
 
-        /* Prevent text selection for app-like feel */
+        /* 防止選取文字，讓質感更像 App */
         body {
             user-select: none;
             -webkit-user-select: none;
@@ -51,20 +51,20 @@
 <div id="app" class="font-sans">
     
     <header class="bg-app-red p-5 shadow-lg text-white text-center font-bold text-xl sticky top-0 z-10">
-        🚨 Emergency Aid
+        🚨 急救與節奏輔助
     </header>
 
     <main class="flex-1 p-6 bg-app-white flex flex-col gap-6 overflow-y-auto">
 
         <section class="bg-gray-50 p-6 rounded-2xl shadow-sm border-t-4 border-app-red">
             <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-                🎵 Metronome
+                🎵 CPR 節拍器
             </h2>
             
             <div class="flex flex-col items-center gap-2">
                 
                 <p class="text-7xl font-black text-app-red tracking-tight">{{ bpm }}</p>
-                <p class="text-sm text-gray-400 font-medium mb-4 uppercase tracking-widest">BPM (Beats Per Minute)</p>
+                <p class="text-sm text-gray-400 font-medium mb-4 uppercase tracking-widest">BPM (每分鐘次數)</p>
 
                 <svg @click="toggleMetronome" 
                      :class="{'beating': isMetronomeRunning}" 
@@ -76,7 +76,7 @@
                 <button @click="toggleMetronome" 
                         :class="isMetronomeRunning ? 'bg-gray-500' : 'bg-app-red shadow-app-red/50'" 
                         class="mt-6 w-full py-4 text-lg text-white font-bold rounded-full shadow-lg transition-all duration-300 active:scale-95">
-                    {{ isMetronomeRunning ? 'STOP' : 'START' }}
+                    {{ isMetronomeRunning ? '停止節奏' : '開始急救節奏' }}
                 </button>
                 
                 <div class="w-full mt-6 px-2">
@@ -98,7 +98,7 @@
                 <svg class="w-10 h-10 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M22 16.92l-3.3-3.3c-.4-.4-.9-.62-1.42-.62h-1.5c-.32 0-.64.08-.94.24-.3.16-.54.4-.68.68-.14.28-.2.6-.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92zM12 2.09c.32 0 .64.08.94.24.3.16.54.4.68.68.14.28.2.6.14.92l.74 3.7c.08.38 0 .76-.2 1.1-.2.34-.52.56-.9.68L12 20.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5V16.92z"/>
                 </svg>
-                <span class="text-lg font-bold leading-tight">Call 119</span>
+                <span class="text-lg font-bold leading-tight">一鍵報案 119</span>
             </button>
 
             <button @click="showCPRModal = true" 
@@ -106,7 +106,7 @@
                 <svg class="w-10 h-10 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
-                <span class="text-lg font-bold leading-tight">CPR Steps</span>
+                <span class="text-lg font-bold leading-tight">CPR 步驟流程</span>
             </button>
 
         </section>
@@ -117,7 +117,7 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh]">
             
             <div class="bg-app-red p-4 text-white">
-                <h3 class="text-2xl font-bold text-center">CPR Guide</h3>
+                <h3 class="text-2xl font-bold text-center">CPR 急救流程</h3>
             </div>
             
             <div class="p-6 overflow-y-auto text-gray-800">
@@ -125,40 +125,40 @@
                     <li class="flex gap-3">
                         <span class="font-black text-app-red text-xl">1.</span>
                         <div>
-                            <strong class="text-lg block">Check Response</strong>
-                            <span class="text-sm text-gray-500">Tap shoulders & shout. Check for breathing.</span>
+                            <strong class="text-lg block">確認意識 (叫)</strong>
+                            <span class="text-sm text-gray-500">拍打雙肩，大聲呼喚患者。</span>
                         </div>
                     </li>
                     <li class="flex gap-3">
                         <span class="font-black text-app-red text-xl">2.</span>
                         <div>
-                            <strong class="text-lg block">Call for Help</strong>
-                            <span class="text-sm text-gray-500">Call 119 immediately. Get AED if available.</span>
+                            <strong class="text-lg block">求救 (叫)</strong>
+                            <span class="text-sm text-gray-500">撥打 119，如有 AED 請旁人拿取。</span>
                         </div>
                     </li>
                     <li class="flex gap-3">
                         <span class="font-black text-app-red text-xl">3.</span>
                         <div>
-                            <strong class="text-lg block">Compressions (C)</strong>
+                            <strong class="text-lg block">胸外按壓 (C)</strong>
                             <span class="text-sm text-gray-500">
-                                Center of chest.<br>
-                                Depth: at least 5cm.<br>
-                                Rate: <strong>100-120 bpm</strong>.
+                                按壓兩乳連線中點。<br>
+                                深度至少 5 公分。<br>
+                                速率 <strong>100-120 次/分</strong>。
                             </span>
                         </div>
                     </li>
                     <li class="flex gap-3">
                         <span class="font-black text-app-red text-xl">4.</span>
                         <div>
-                            <strong class="text-lg block">Airway (A)</strong>
-                            <span class="text-sm text-gray-500">Head tilt, chin lift.</span>
+                            <strong class="text-lg block">暢通呼吸道 (A)</strong>
+                            <span class="text-sm text-gray-500">壓額提下巴。</span>
                         </div>
                     </li>
                     <li class="flex gap-3">
                         <span class="font-black text-app-red text-xl">5.</span>
                         <div>
-                            <strong class="text-lg block">Breathing (B)</strong>
-                            <span class="text-sm text-gray-500">2 breaths after 30 compressions (30:2).</span>
+                            <strong class="text-lg block">人工呼吸 (B)</strong>
+                            <span class="text-sm text-gray-500">每 30 下按壓後，給 2 次吹氣 (30:2)。</span>
                         </div>
                     </li>
                 </ul>
@@ -167,7 +167,7 @@
             <div class="p-4 border-t border-gray-100">
                 <button @click="showCPRModal = false" 
                         class="w-full py-3 bg-gray-200 text-gray-800 font-bold rounded-xl hover:bg-gray-300 active:bg-gray-400 transition">
-                    Close Guide
+                    關閉教學
                 </button>
             </div>
         </div>
@@ -186,7 +186,7 @@
             let metronomeInterval = null;
             let audioContext = null;
 
-            // Audio Logic
+            // 聲音邏輯
             function setupAudio() {
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -195,6 +195,7 @@
 
             function playClick() {
                 setupAudio();
+                // 解決瀏覽器阻擋自動播放的問題
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
@@ -205,8 +206,9 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
 
+                // 設定高音頻率，讓節奏更明顯
                 oscillator.type = 'square';
-                oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // Higher pitch for clarity
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
 
@@ -217,13 +219,13 @@
             function startMetronome() {
                 if (metronomeInterval) clearInterval(metronomeInterval);
                 
-                // Clamp BPM
+                // 限制 BPM 範圍
                 if (bpm.value < 60) bpm.value = 60;
                 if (bpm.value > 180) bpm.value = 180;
 
                 const intervalTime = (60 / bpm.value) * 1000; 
 
-                // Play first beat immediately
+                // 立即播放第一聲
                 playClick();
                 
                 metronomeInterval = setInterval(() => {
@@ -249,13 +251,13 @@
                 }
             }
 
-            // Adjust speed in real-time
+            // 即時調整速度
             watch(bpm, () => {
                 if (isMetronomeRunning.value) startMetronome();
             });
 
             function callEmergency() {
-                if (confirm("Call Emergency Services (119)?")) {
+                if (confirm("確定要撥打緊急電話 119 嗎？")) {
                     window.location.href = "tel:119"; 
                 }
             }
